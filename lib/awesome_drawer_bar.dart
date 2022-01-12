@@ -483,47 +483,43 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   }
 
   Widget renderRotate3dIn() {
-    final rightSlide = MediaQuery.of(context).size.width * 0.75;
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
+        double rightSlide = MediaQuery.of(context).size.width * 0.75;
         double x = _animationController.value * (rightSlide / 1.89);
         double rotate = _animationController.value * (pi / 4);
         return dragClick(
-            menuScreen: Scaffold(
-              backgroundColor: widget.backgroundColor,
-              body: Transform.translate(
-                offset: Offset(0, 0),
-                child: widget.menuScreen,
+          menuScreen: Container(
+            color: widget.backgroundColor,
+            child: widget.menuScreen,
+          ),
+          mainScreen: Transform(
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.0009)
+              ..translate(widget.isRTL ? -x : x)
+              ..rotateY(widget.isRTL ? -rotate : rotate),
+            alignment: widget.isRTL ? Alignment.centerLeft : Alignment.centerRight,
+            child: GestureDetector(
+              onTap: () {
+                if (_state == DrawerState.open) {
+                  toggle();
+                }
+              },
+              child: Stack(
+                children: [
+                  widget.mainScreen,
+                  if (_animationController.value > 0) ...[
+                    Opacity(
+                      opacity: 0,
+                      child: Container(color: Colors.black),
+                    )
+                  ]
+                ],
               ),
             ),
-            mainScreen: Transform(
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.0009)
-                ..translate(widget.isRTL ? -x : x)
-                ..rotateY(widget.isRTL ? -rotate : rotate),
-              alignment: widget.isRTL ? Alignment.centerLeft : Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  if (_state == DrawerState.open) {
-                    toggle();
-                  }
-                },
-                child: Stack(
-                  children: [
-                    widget.mainScreen,
-                    if (_animationController.value > 0) ...[
-                      Opacity(
-                        opacity: 0,
-                        child: Container(
-                          color: Colors.black,
-                        ),
-                      )
-                    ]
-                  ],
-                ),
-              ),
-            ));
+          ),
+        );
       },
     );
   }
