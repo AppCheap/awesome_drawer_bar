@@ -354,19 +354,21 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                   transform: Matrix4.identity()..translate(widget.isRTL ? -slide : slide),
                   alignment: Alignment.center,
                   child: GestureDetector(
-                      onPanUpdate: (details) {
-                    if ((details.delta.dx > 6 || details.delta.dx < 6 && _state == DrawerState.open) && !widget.isRTL) {
-                      if (_state == DrawerState.open && details.delta.dx < -6) {
-                        close();
+                    onPanUpdate: (details) {
+                      if ((details.delta.dx > 6 || details.delta.dx < 6 && _state == DrawerState.open) &&
+                          !widget.isRTL) {
+                        if (_state == DrawerState.open && details.delta.dx < -6) {
+                          close();
+                        }
                       }
-                    }
 
-                    if ((details.delta.dx < -6 || details.delta.dx > 6 && _state == DrawerState.open) && widget.isRTL) {
-                      if (_state == DrawerState.open && details.delta.dx > 6) {
-                        close();
+                      if ((details.delta.dx < -6 || details.delta.dx > 6 && _state == DrawerState.open) &&
+                          widget.isRTL) {
+                        if (_state == DrawerState.open && details.delta.dx > 6) {
+                          close();
+                        }
                       }
-                    }
-                  },
+                    },
                     child: Stack(
                       children: [
                         widget.mainScreen,
@@ -527,49 +529,45 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   }
 
   Widget renderRotate3dOut() {
-    final rightSlide = MediaQuery.of(context).size.width * 0.75;
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
+        double rightSlide = MediaQuery.of(context).size.width * 0.75;
         double x = _animationController.value * (rightSlide / 2.65);
         double scale = 1 - (_animationController.value * 0.3);
         double rotate = _animationController.value * (pi / 4);
         return dragClick(
-            menuScreen: Scaffold(
-              backgroundColor: widget.backgroundColor,
-              body: Transform.translate(
-                offset: Offset(0, 0),
-                child: widget.menuScreen,
+          menuScreen: Container(
+            color: widget.backgroundColor,
+            child: widget.menuScreen,
+          ),
+          mainScreen: Transform(
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.0009)
+              ..translate(widget.isRTL ? -x : x)
+              ..scale(scale)
+              ..rotateY(widget.isRTL ? rotate : -rotate),
+            alignment: widget.isRTL ? Alignment.centerLeft : Alignment.centerRight,
+            child: GestureDetector(
+              onTap: () {
+                if (_state == DrawerState.open) {
+                  toggle();
+                }
+              },
+              child: Stack(
+                children: [
+                  widget.mainScreen,
+                  if (_animationController.value > 0) ...[
+                    Opacity(
+                      opacity: 0,
+                      child: Container(color: Colors.black),
+                    )
+                  ]
+                ],
               ),
             ),
-            mainScreen: Transform(
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.0009)
-                ..translate(widget.isRTL ? -x : x)
-                ..scale(scale)
-                ..rotateY(widget.isRTL ? rotate : -rotate),
-              alignment: widget.isRTL ? Alignment.centerLeft : Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  if (_state == DrawerState.open) {
-                    toggle();
-                  }
-                },
-                child: Stack(
-                  children: [
-                    widget.mainScreen,
-                    if (_animationController.value > 0) ...[
-                      Opacity(
-                        opacity: 0,
-                        child: Container(
-                          color: Colors.black,
-                        ),
-                      )
-                    ]
-                  ],
-                ),
-              ),
-            ));
+          ),
+        );
       },
     );
   }
