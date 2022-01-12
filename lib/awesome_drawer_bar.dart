@@ -291,43 +291,37 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   }
 
   Widget renderFixedStack() {
-    final rightSlide = MediaQuery.of(context).size.width * 0.75;
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
+        double rightSlide = MediaQuery.of(context).size.width * 0.75;
         double slide = rightSlide * _animationController.value;
         return dragClick(
-          menuScreen: Scaffold(
-            backgroundColor: widget.backgroundColor,
-            body: Transform.translate(
-              offset: Offset(0, 0),
-              child: widget.menuScreen,
-            ),
+          menuScreen: Container(
+            color: widget.backgroundColor,
+            child: widget.menuScreen,
           ),
           mainScreen: Transform(
             transform: Matrix4.identity()..translate(widget.isRTL ? -slide : slide),
-            alignment: Alignment.center,
-            child: Container(
-              child: GestureDetector(
-                child: Stack(
-                  children: [
-                    widget.mainScreen,
-                    if (_animationController.value > 0) ...[
-                      Opacity(
-                        opacity: _animationController.value * 0.5,
-                        child: Container(
-                          color: Colors.black,
-                        ),
-                      )
-                    ],
+            child: GestureDetector(
+              child: Stack(
+                children: [
+                  widget.mainScreen,
+                  if (_animationController.value > 0) ...[
+                    Opacity(
+                      opacity: _animationController.value * 0.5,
+                      child: Container(
+                        color: Colors.black,
+                      ),
+                    )
                   ],
-                ),
-                onTap: () {
-                  if (_state == DrawerState.open) {
-                    toggle();
-                  }
-                },
+                ],
               ),
+              onTap: () {
+                if (_state == DrawerState.open) {
+                  toggle();
+                }
+              },
             ),
           ),
         );
