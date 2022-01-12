@@ -336,23 +336,26 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   }
 
   Widget renderStack() {
-    final rightSlide = MediaQuery.of(context).size.width * 0.75;
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
+        double rightSlide = MediaQuery.of(context).size.width * 0.75;
         double slide = rightSlide * _animationController.value;
         double left = (1 - _animationController.value) * rightSlide;
         return Stack(
           children: [
             Transform.translate(
               offset: Offset(widget.isRTL ? left : -left, 0),
-              child: Container(color: Colors.blueAccent, width: rightSlide, child: widget.menuScreen),
+              child: Container(
+                color: widget.backgroundColor,
+                width: rightSlide,
+                child: widget.menuScreen,
+              ),
             ),
             Stack(
               children: [
                 Transform(
                   transform: Matrix4.identity()..translate(widget.isRTL ? -slide : slide),
-                  alignment: Alignment.center,
                   child: GestureDetector(
                     onPanUpdate: (details) {
                       if ((details.delta.dx > 6 || details.delta.dx < 6 && _state == DrawerState.open) &&
@@ -361,7 +364,6 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                           close();
                         }
                       }
-
                       if ((details.delta.dx < -6 || details.delta.dx > 6 && _state == DrawerState.open) &&
                           widget.isRTL) {
                         if (_state == DrawerState.open && details.delta.dx > 6) {
