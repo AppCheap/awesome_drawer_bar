@@ -604,7 +604,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                     child: Stack(
                       children: <Widget>[
                         Container(
-                          color: Colors.red.withOpacity(0.6), //widget.backgroundColor.withOpacity(0.6),
+                          color: widget.backgroundColor,
                           child: widget.menuScreen,
                         ),
                         Padding(
