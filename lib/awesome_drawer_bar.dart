@@ -283,6 +283,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
               offset: Offset(widget.isRTL ? left : -left, 0),
               child: Container(
                 width: rightSlide,
+                color: widget.backgroundColor,
                 child: widget.menuScreen,
               ),
             ));
