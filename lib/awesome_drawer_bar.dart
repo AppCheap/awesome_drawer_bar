@@ -125,13 +125,16 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   bool isOpen() => _state == DrawerState.open; /* || _state == DrawerState.opening*/
 
   /// Drawer state
-  ValueNotifier<DrawerState>? stateNotifier;
+  final ValueNotifier<DrawerState> _stateNotifier = ValueNotifier(DrawerState.closed);
+
+  /// Drawer state
+  ValueNotifier<DrawerState> get stateNotifier => _stateNotifier;
 
   @override
   void initState() {
     super.initState();
 
-    stateNotifier = ValueNotifier(_state);
+    _stateNotifier.dispose();
 
     /// Initialize the animation controller
     /// add status listener to update the menuStatus
@@ -176,7 +179,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   }
 
   _updateStatusNotifier() {
-    stateNotifier!.value = _state;
+    stateNotifier.value = _state;
   }
 
   @override
@@ -205,8 +208,6 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   }) {
     double slidePercent, scalePercent;
     int _rtlSlide = widget.isRTL ? -1 : 1;
-
-    double defaultWidth = MediaQuery.of(context).size.width * (widget.isRTL ? 0.65 : 0.83);
 
     /// determine current slide percent based on the MenuStatus
     switch (_state) {
