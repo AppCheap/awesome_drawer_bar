@@ -1,54 +1,64 @@
+import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:example/menu_page.dart';
 import 'package:example/page_structure.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  static List<MenuItem> mainMenu = [
-    MenuItem(tr("payment"), Icons.payment, 0),
-    MenuItem(tr("promos"), Icons.card_giftcard, 1),
-    MenuItem(tr("notifications"), Icons.notifications, 2),
-    MenuItem(tr("help"), Icons.help, 3),
-    MenuItem(tr("about_us"), Icons.info_outline, 4),
+  static List<MenuClass> mainMenu = [
+    MenuClass(tr("payment"), Icons.payment, 0),
+    MenuClass(tr("promos"), Icons.card_giftcard, 1),
+    MenuClass(tr("notifications"), Icons.notifications, 2),
+    MenuClass(tr("help"), Icons.help, 3),
+    MenuClass(tr("about_us"), Icons.info_outline, 4),
   ];
 
   @override
-  _HomeScreenState createState() => new _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   final _drawerController = AwesomeDrawerBarController();
-
-  int _currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
+    final _isRtl = context.locale.languageCode == "ar";
     return AwesomeDrawerBar(
-      isRTL: true,
       controller: _drawerController,
-      type: StyleState.scaleRight, // default,style1,style2,style3,style4,style5
       menuScreen: MenuScreen(
         HomeScreen.mainMenu,
         callback: _updatePage,
-        current: _currentPage,
+        current: 0,
       ),
       mainScreen: MainScreen(),
-      borderRadius: 24.0,
-      showShadow: true, //default,style1,style3
-      angle: 0.0, //default
-      slideWidth: MediaQuery.of(context).size.width * (false ? .45 : 0.65), // default
-      // slideHeight: MediaQuery.of(context).size.height * (AwesomeDrawerBar.isRTL() ? .45 : -0.17), //default
-      // openCurve: Curves.fastOutSlowIn,
-      // closeCurve: Curves.bounceIn,
+      openCurve: Curves.fastOutSlowIn,
+      showShadow: false,
+      // slideWidth: MediaQuery.of(context).size.width * (_isRtl ? .55 : 0.65),
+      isRTL: _isRtl,
+      // mainScreenTapClose: true,
+      // mainScreenOverlayColor: Colors.brown.withOpacity(0.5),
+      borderRadius: 10,
+      angle: 0.0,
+      // menuScreenWidth: double.infinity,
+      // moveMenuScreen: false,
+      type: StyleState.overlay,
+      // drawerShadowsBackgroundColor: Colors.yellow,
+      // mainScreenAbsorbPointer: false,
+      // boxShadow: [
+      //   BoxShadow(
+      //     color: Colors.grey.withOpacity(0.5),
+      //     spreadRadius: 5,
+      //     blurRadius: 7,
+      //     offset: Offset(0, 3), // changes position of shadow
+      //   ),
+      // ],
     );
   }
 
-  void _updatePage(index) {
-    Provider.of<MenuProvider>(context, listen: false).updateCurrentPage(index);
-    _drawerController.toggle();
+  void _updatePage(int index) {
+    context.read<MenuProvider>().updateCurrentPage(index);
+    _drawerController.toggle?.call();
   }
 }
 
@@ -60,9 +70,9 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
-    final rtl = false;
+    final rtl = context.locale.languageCode == "ar";
     return ValueListenableBuilder<DrawerState>(
-      valueListenable: AwesomeDrawerBar.of(context).stateNotifier,
+      valueListenable: AwesomeDrawerBar.of(context)!.stateNotifier,
       builder: (context, state, child) {
         return AbsorbPointer(
           absorbing: state != DrawerState.closed,
@@ -70,10 +80,10 @@ class _MainScreenState extends State<MainScreen> {
         );
       },
       child: GestureDetector(
-        child: PageStructure(),
+        child: const PageStructure(),
         onPanUpdate: (details) {
           if (details.delta.dx < 6 && !rtl || details.delta.dx < -6 && rtl) {
-            AwesomeDrawerBar.of(context).toggle();
+            AwesomeDrawerBar.of(context)?.toggle.call();
           }
         },
       ),
@@ -87,9 +97,8 @@ class MenuProvider extends ChangeNotifier {
   int get currentPage => _currentPage;
 
   void updateCurrentPage(int index) {
-    if (index != currentPage) {
-      _currentPage = index;
-      notifyListeners();
-    }
+    if (index == currentPage) return;
+    _currentPage = index;
+    notifyListeners();
   }
 }
