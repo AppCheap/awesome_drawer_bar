@@ -28,11 +28,9 @@ class AwesomeDrawerBar extends StatefulWidget {
     this.controller,
     required this.menuScreen,
     required this.mainScreen,
-    this.slideWidth,
     this.slideHeight,
     this.borderRadius = 16.0,
     this.angle = 0.0,
-    this.backgroundColor = Colors.white,
     this.shadowColor = Colors.white,
     this.showShadow = false,
     this.openCurve,
@@ -54,7 +52,6 @@ class AwesomeDrawerBar extends StatefulWidget {
   final Widget mainScreen;
 
   /// Sliding width of the drawer - defaults to 275.0
-  final double? slideWidth;
   final double? slideHeight;
 
   /// Border radius of the slided content - defaults to 16.0
@@ -62,9 +59,6 @@ class AwesomeDrawerBar extends StatefulWidget {
 
   /// Rotation angle of the drawer - defaults to -12.0
   final double angle;
-
-  /// Background color of the drawer shadows - defaults to white
-  final Color backgroundColor;
 
   final Color shadowColor;
 
@@ -128,7 +122,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   }
 
   /// check whether drawer is open
-  bool isOpen() => _state == DrawerState.open /* || _state == DrawerState.opening*/;
+  bool isOpen() => _state == DrawerState.open; /* || _state == DrawerState.opening*/
 
   /// Drawer state
   ValueNotifier<DrawerState>? stateNotifier;
@@ -233,13 +227,17 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
         scalePercent = _scaleUpCurve.transform(_percentOpen);
         break;
     }
+    double widthDevice = MediaQuery.of(context).size.width;
+    bool maxWidth = widthDevice >= 540;
+    double desktop = widthDevice * (widget.isRTL ? 0.2 : 0.3);
+    double mobile = widthDevice * (widget.isRTL ? 0.735 : 0.835);
 
     /// calculated sliding amount based on the RTL and animation value
-    double slideAmountWidth = (widget.slideWidth ?? defaultWidth - slideW) * slidePercent * _rtlSlide;
+    double slideAmountWidth = (maxWidth ? desktop : mobile - slideW) * slidePercent * _rtlSlide;
     double slideAmountHeight = (widget.slideHeight ?? slideHeight) * slidePercent * _rtlSlide;
 
     /// calculated scale amount based on the provided scale and animation value
-    double contentScale = (scale ?? 1.0) - (0.2 * scalePercent);
+    double contentScale = (scale ?? 1.0) - (0.1 * scalePercent);
 
     /// calculated radius based on the provided radius and animation value
     double cornerRadius = widget.borderRadius * _percentOpen;
@@ -259,11 +257,11 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
     );
   }
 
-  Widget renderOverlay() {
+  Widget renderOverlay(double widthDevice) {
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
-        double rightSlide = MediaQuery.of(context).size.width * 0.75;
+        double rightSlide = widthDevice >= 540 ? widthDevice * 0.3 : widthDevice * 0.75;
         double left = (1 - _animationController.value) * rightSlide;
         return dragClick(
             menuScreen: GestureDetector(
@@ -290,7 +288,6 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
               offset: Offset(widget.isRTL ? left : -left, 0),
               child: Container(
                 width: rightSlide,
-                color: widget.backgroundColor,
                 child: widget.menuScreen,
               ),
             ));
@@ -298,17 +295,14 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
     );
   }
 
-  Widget renderFixedStack() {
+  Widget renderFixedStack(double widthDevice) {
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
-        double rightSlide = MediaQuery.of(context).size.width * 0.75;
+        double rightSlide = widthDevice >= 540 ? widthDevice * 0.3 : widthDevice * 0.75;
         double slide = rightSlide * _animationController.value;
         return dragClick(
-          menuScreen: Container(
-            color: widget.backgroundColor,
-            child: widget.menuScreen,
-          ),
+          menuScreen: widget.menuScreen,
           mainScreen: Transform(
             transform: Matrix4.identity()..translate(widget.isRTL ? -slide : slide),
             child: GestureDetector(
@@ -337,11 +331,11 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
     );
   }
 
-  Widget renderStack() {
+  Widget renderStack(double widthDevice) {
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
-        double rightSlide = MediaQuery.of(context).size.width * 0.75;
+        double rightSlide = widthDevice >= 540 ? widthDevice * 0.3 : widthDevice * 0.75;
         double slide = rightSlide * _animationController.value;
         double left = (1 - _animationController.value) * rightSlide;
         return Stack(
@@ -349,7 +343,6 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
             Transform.translate(
               offset: Offset(widget.isRTL ? left : -left, 0),
               child: Container(
-                color: widget.backgroundColor,
                 width: rightSlide,
                 child: widget.menuScreen,
               ),
@@ -424,83 +417,85 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
     );
   }
 
-  Widget renderScaleRight({double slideHeight = 0.0, double scaleAngle = 0.0}) {
-    double slidePercent = widget.isRTL ? MediaQuery.of(context).size.width * .095 : 15.0;
-    return dragClick(
-      menuScreen: Container(
-        color: widget.backgroundColor,
-        child: widget.menuScreen,
-      ),
-      shadow: widget.showShadow == true
-          ? [
-              /// Displaying the first shadow
-              AnimatedBuilder(
-                animation: _animationController,
-                builder: (_, w) => _zoomAndSlideContent(w,
-                    slideHeight: slideHeight,
-                    scaleAngle: scaleAngle == 0.0 ? 0.0 : scaleAngle - 8,
-                    scale: .9,
-                    slideW: slidePercent * 2),
-                child: Container(
-                  color: widget.shadowColor.withOpacity(0.3),
-                ),
-              ),
-              AnimatedBuilder(
-                animation: _animationController,
-                builder: (_, w) => _zoomAndSlideContent(w,
-                    slideHeight: slideHeight,
-                    scaleAngle: scaleAngle == 0.0 ? 0.0 : scaleAngle - 4.0,
-                    scale: .95,
-                    slideW: slidePercent),
-                child: Container(
-                  color: widget.shadowColor.withOpacity(0.9),
-                ),
-              )
-            ]
-          : null,
-      mainScreen: AnimatedBuilder(
-        animation: _animationController,
-        builder: (_, w) => _zoomAndSlideContent(w, slideHeight: slideHeight, scaleAngle: scaleAngle),
-        child: GestureDetector(
-          child: Stack(
-            children: [
-              widget.mainScreen,
-              if (_animationController.value > 0) ...[
-                Opacity(
-                  opacity: 0,
-                  child: Container(
-                    color: Colors.black,
-                  ),
-                )
-              ]
-            ],
-          ),
-          onTap: () {
-            if (_state == DrawerState.open) {
-              toggle();
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget renderRotate3dIn() {
+  Widget renderScaleRight(double widthDevice, {double slideHeight = 0.0, double scaleAngle = 0.0}) {
+    double slidePercent = widget.isRTL ? widthDevice * .095 : 15.0;
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
-        double rightSlide = MediaQuery.of(context).size.width * 0.75;
-        double x = _animationController.value * (rightSlide / 1.89);
-        double rotate = _animationController.value * (pi / 4);
         return dragClick(
-          menuScreen: Container(
-            color: widget.backgroundColor,
-            child: widget.menuScreen,
+          menuScreen: widget.menuScreen,
+          shadow: widget.showShadow == true
+              ? [
+                  /// Displaying the first shadow
+                  AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (_, w) => _zoomAndSlideContent(w,
+                        slideHeight: slideHeight,
+                        scaleAngle: scaleAngle == 0.0 ? 0.0 : scaleAngle - 8,
+                        scale: .9,
+                        slideW: slidePercent * 2),
+                    child: Container(
+                      color: widget.shadowColor.withOpacity(0.3),
+                    ),
+                  ),
+                  AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (_, w) => _zoomAndSlideContent(w,
+                        slideHeight: slideHeight,
+                        scaleAngle: scaleAngle == 0.0 ? 0.0 : scaleAngle - 4.0,
+                        scale: .95,
+                        slideW: slidePercent),
+                    child: Container(
+                      color: widget.shadowColor.withOpacity(0.9),
+                    ),
+                  )
+                ]
+              : null,
+          mainScreen: AnimatedBuilder(
+            animation: _animationController,
+            builder: (_, w) => _zoomAndSlideContent(w, slideHeight: slideHeight, scaleAngle: scaleAngle),
+            child: GestureDetector(
+              child: Stack(
+                children: [
+                  widget.mainScreen,
+                  if (_animationController.value > 0) ...[
+                    Opacity(
+                      opacity: 0,
+                      child: Container(
+                        color: Colors.black,
+                      ),
+                    )
+                  ]
+                ],
+              ),
+              onTap: () {
+                if (_state == DrawerState.open) {
+                  toggle();
+                }
+              },
+            ),
           ),
+        );
+      },
+    );
+  }
+
+  Widget renderRotate3dIn(double widthDevice) {
+    bool maxWidth = widthDevice >= 540;
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (context, child) {
+        double rightSlide = maxWidth ? widthDevice * 0.2 : widthDevice * 0.4;
+        double x = _animationController.value * rightSlide;
+        double scale = 1 - (_animationController.value * 0.01);
+        double rotate = _animationController.value * (pi / (maxWidth ? 15 : 4));
+        return dragClick(
+          menuScreen: widget.menuScreen,
           mainScreen: Transform(
             transform: Matrix4.identity()
               ..setEntry(3, 2, 0.0009)
               ..translate(widget.isRTL ? -x : x)
+              ..scale(scale)
               ..rotateY(widget.isRTL ? -rotate : rotate),
             alignment: widget.isRTL ? Alignment.centerLeft : Alignment.centerRight,
             child: GestureDetector(
@@ -527,19 +522,17 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
     );
   }
 
-  Widget renderRotate3dOut() {
+  Widget renderRotate3dOut(double widthDevice) {
+    bool maxWidth = widthDevice >= 540;
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
-        double rightSlide = MediaQuery.of(context).size.width * 0.75;
-        double x = _animationController.value * (rightSlide / 2.65);
-        double scale = 1 - (_animationController.value * 0.3);
-        double rotate = _animationController.value * (pi / 4);
+        double rightSlide = maxWidth ? widthDevice * 0.159 : widthDevice * 0.325;
+        double x = _animationController.value * rightSlide;
+        double scale = 1 - (_animationController.value * 0.25);
+        double rotate = _animationController.value * (pi / (maxWidth ? 15 : 4));
         return dragClick(
-          menuScreen: Container(
-            color: widget.backgroundColor,
-            child: widget.menuScreen,
-          ),
+          menuScreen: widget.menuScreen,
           mainScreen: Transform(
             transform: Matrix4.identity()
               ..setEntry(3, 2, 0.0009)
@@ -600,10 +593,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                     },
                     child: Stack(
                       children: <Widget>[
-                        Container(
-                          color: widget.backgroundColor,
-                          child: widget.menuScreen,
-                        ),
+                        widget.menuScreen,
                         Padding(
                           padding: EdgeInsets.only(right: 24, top: 24),
                           child: Align(
@@ -634,28 +624,29 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    double getWidthDevice = MediaQuery.of(context).size.width;
     double slideHeight = MediaQuery.of(context).size.height * (widget.isRTL ? -0.19 : 0.19);
     switch (widget.type) {
       case StyleState.fixedStack:
-        return renderFixedStack();
+        return renderFixedStack(getWidthDevice);
       case StyleState.stack:
-        return renderStack();
+        return renderStack(getWidthDevice);
       case StyleState.scaleRight:
-        return renderScaleRight(scaleAngle: widget.angle, slideHeight: 0.0);
+        return renderScaleRight(getWidthDevice, scaleAngle: widget.angle, slideHeight: 0.0);
       case StyleState.scaleBottom:
-        return renderScaleRight(scaleAngle: widget.angle, slideHeight: slideHeight);
+        return renderScaleRight(getWidthDevice, scaleAngle: widget.angle, slideHeight: slideHeight);
       case StyleState.scaleTop:
-        return renderScaleRight(scaleAngle: widget.angle, slideHeight: -slideHeight);
+        return renderScaleRight(getWidthDevice, scaleAngle: widget.angle, slideHeight: -slideHeight);
       case StyleState.scaleRotate:
-        return renderScaleRight(scaleAngle: widget.angle - 3.0);
+        return renderScaleRight(getWidthDevice, scaleAngle: widget.angle - 3.0);
       case StyleState.rotate3dIn:
-        return renderRotate3dIn();
+        return renderRotate3dIn(getWidthDevice);
       case StyleState.rotate3dOut:
-        return renderRotate3dOut();
+        return renderRotate3dOut(getWidthDevice);
       case StyleState.popUp:
         return renderPopUp();
       default:
-        return renderOverlay();
+        return renderOverlay(getWidthDevice);
     }
   }
 
