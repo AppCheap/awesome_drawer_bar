@@ -134,8 +134,6 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   void initState() {
     super.initState();
 
-    _stateNotifier.dispose();
-
     /// Initialize the animation controller
     /// add status listener to update the menuStatus
     _animationController = AnimationController(
@@ -185,6 +183,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   @override
   void dispose() {
     _animationController.dispose();
+    _stateNotifier.dispose();
     super.dispose();
   }
 
