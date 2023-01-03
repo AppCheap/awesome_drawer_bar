@@ -6,6 +6,9 @@ class AdaptiveLayoutCustom extends StatelessWidget {
   final Widget child;
 
   /// Screen containing the menu/bottom screen
+  final Widget? tabs;
+
+  /// Screen containing the menu/bottom screen
   final Widget menuScreen;
 
   /// Screen containing the main content to display
@@ -16,11 +19,11 @@ class AdaptiveLayoutCustom extends StatelessWidget {
     required this.menuScreen,
     required this.mainScreen,
     required this.child,
+    required this.tabs,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     double screenWidth = MediaQuery.of(context).size.width;
     double sidebarWidth = 300;
     double contentWidth = 840 - sidebarWidth;
@@ -38,7 +41,14 @@ class AdaptiveLayoutCustom extends StatelessWidget {
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('Body Large'),
-            builder: (_) => Padding(padding: EdgeInsets.only(left: padding), child: menuScreen),
+            builder: (_) => Padding(
+                padding: EdgeInsets.only(left: padding),
+                child: Column(
+                  children: [
+                    if (tabs != null) tabs!,
+                    menuScreen,
+                  ],
+                )),
           )
         },
       ),
