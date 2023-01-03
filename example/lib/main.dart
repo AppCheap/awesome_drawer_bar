@@ -2,11 +2,14 @@ import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final _drawerController = AwesomeDrawerBarController();
+
+  MyApp({super.key});
+
 
   // This widget is the root of your application.
   @override
@@ -27,7 +30,8 @@ class MyApp extends StatelessWidget {
       ),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
       home: AwesomeDrawerBar(
-        mainScreen: const MyHomePage(title: 'Flutter Demo Home Page'),
+        controller: _drawerController,
+        mainScreen: MyHomePage(title: 'Flutter Demo Home Page', toggle: _drawerController.toggle),
         menuScreen: const Sidebar(),
       ),
     );
@@ -48,7 +52,8 @@ class Sidebar extends StatelessWidget {
 
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  Function? toggle;
+  MyHomePage({super.key, required this.title, this.toggle});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -124,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () => widget.toggle!() ?? {},
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
