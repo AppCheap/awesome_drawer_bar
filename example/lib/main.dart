@@ -1,3 +1,4 @@
+import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -24,10 +25,27 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: AwesomeDrawerBar(
+        mainScreen: const MyHomePage(title: 'Flutter Demo Home Page'),
+        menuScreen: const Sidebar(),
+      ),
     );
   }
 }
+
+class Sidebar extends StatelessWidget {
+  const Sidebar({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Colors.black,
+      body: Text('Sidebar'),
+    );
+  }
+}
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
