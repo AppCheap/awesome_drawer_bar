@@ -20,8 +20,14 @@ class AdaptiveLayoutCustom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    double screenWidth = MediaQuery.of(context).size.width;
+    double sidebarWidth = 300;
+    double contentWidth = 840 - sidebarWidth;
+    double padding = (screenWidth - (sidebarWidth + contentWidth)) / 2;
+
     return AdaptiveLayout(
-      bodyRatio: 0.25,
+      bodyRatio: (300 + padding) / screenWidth,
       body: SlotLayout(
         config: <Breakpoint, SlotLayoutConfig>{
           Breakpoints.standard: SlotLayout.from(
@@ -32,7 +38,7 @@ class AdaptiveLayoutCustom extends StatelessWidget {
           ),
           Breakpoints.large: SlotLayout.from(
             key: const Key('Body Large'),
-            builder: (_) => menuScreen,
+            builder: (_) => Padding(padding: EdgeInsets.only(left: padding), child: menuScreen),
           )
         },
       ),
@@ -42,7 +48,7 @@ class AdaptiveLayoutCustom extends StatelessWidget {
             key: const Key('Secondary Large'),
             inAnimation: null,
             outAnimation: null,
-            builder: (_) => mainScreen,
+            builder: (_) => Padding(padding: EdgeInsets.only(right: padding), child: mainScreen),
           )
         },
       ),
