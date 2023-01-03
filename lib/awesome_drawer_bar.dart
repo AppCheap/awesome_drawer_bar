@@ -644,6 +644,8 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
       mainScreen: widget.mainScreen,
       child: _renderLayout(context),
       tabs: widget.tabs,
+      backgroundMenu: widget.backgroundColor,
+      shadowMenu: widget.showShadow ? widget.shadowColor : null,
     );
   }
 
