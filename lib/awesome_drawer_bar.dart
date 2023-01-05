@@ -29,7 +29,6 @@ class AwesomeDrawerBar extends StatefulWidget {
     this.controller,
     required this.menuScreen,
     required this.mainScreen,
-    this.tabs,
     this.slideWidth,
     this.slideHeight,
     this.borderRadius = 16.0,
@@ -54,9 +53,6 @@ class AwesomeDrawerBar extends StatefulWidget {
 
   /// Screen containing the main content to display
   final Widget mainScreen;
-
-  /// Screen containing the main content to display
-  final Widget? tabs;
 
   /// Sliding width of the drawer - defaults to 275.0
   final double? slideWidth;
@@ -643,9 +639,6 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
       menuScreen: widget.menuScreen,
       mainScreen: widget.mainScreen,
       child: _renderLayout(context),
-      tabs: widget.tabs,
-      backgroundMenu: widget.backgroundColor,
-      shadowMenu: widget.showShadow ? widget.shadowColor : null,
     );
   }
 
