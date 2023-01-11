@@ -38,7 +38,7 @@ class AdaptiveLayoutCustom extends StatelessWidget {
           Breakpoints.large: SlotLayout.from(
             key: const Key('Body Large'),
             builder: (_) => Padding(
-              padding: EdgeInsets.only(left: padding, right: 20),
+              padding: EdgeInsetsDirectional.only(start: padding, end: 20),
               child: menuScreen,
             ),
           )
@@ -51,7 +51,7 @@ class AdaptiveLayoutCustom extends StatelessWidget {
                   key: const Key('Secondary Large'),
                   inAnimation: null,
                   outAnimation: null,
-                  builder: (_) => Padding(padding: EdgeInsets.only(right: padding), child: mainScreen),
+                  builder: (_) => Padding(padding: EdgeInsetsDirectional.only(end: padding), child: mainScreen),
                 )
               },
             )
