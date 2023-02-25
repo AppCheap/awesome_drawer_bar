@@ -308,7 +308,11 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                 ],
               ],
             ),
-            onTap: _state == DrawerState.open ? () => toggle() : null,
+            onTap: () {
+              if (_state == DrawerState.open) {
+                toggle();
+              }
+            },
           ),
           mainScreen: Transform.translate(
             offset: Offset(widget.isRTL ? left : -left, 0),
@@ -348,7 +352,11 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                   ],
                 ],
               ),
-              onTap: _state == DrawerState.open ? () => toggle() : null,
+              onTap: () {
+                if (_state == DrawerState.open) {
+                  toggle();
+                }
+              },
             ),
           ),
         );
@@ -390,7 +398,11 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                         ],
                       ],
                     ),
-                    onTap: _state == DrawerState.open ? () => toggle() : null,
+                    onTap: () {
+                      if (_state == DrawerState.open) {
+                        toggle();
+                      }
+                    },
                   ),
                 ),
                 GestureDetector(
@@ -468,7 +480,11 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                 ),
             ],
           ),
-          onTap: _state == DrawerState.open ? () => toggle() : null,
+          onTap: () {
+            if (_state == DrawerState.open) {
+              toggle();
+            }
+          },
         ),
       ),
     );
@@ -493,7 +509,11 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
               ..rotateY(widget.isRTL ? -rotate : rotate),
             alignment: widget.isRTL ? Alignment.centerLeft : Alignment.centerRight,
             child: GestureDetector(
-              onTap: _state == DrawerState.open ? () => toggle() : null,
+              onTap: () {
+                if (_state == DrawerState.open) {
+                  toggle();
+                }
+              },
               child: Stack(
                 children: [
                   widget.mainScreen,
@@ -528,7 +548,11 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
               ..rotateY(widget.isRTL ? rotate : -rotate),
             alignment: widget.isRTL ? Alignment.centerLeft : Alignment.centerRight,
             child: GestureDetector(
-              onTap: _state == DrawerState.open ? () => toggle() : null,
+              onTap: () {
+                if (_state == DrawerState.open) {
+                  toggle();
+                }
+              },
               child: Stack(
                 children: [
                   widget.mainScreen,
