@@ -395,7 +395,11 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                 Transform(
                   transform: Matrix4.identity()..translate(widget.isRTL ? -slide : slide),
                   child: GestureDetector(
-                    onHorizontalDragUpdate: (details) => closeDrag(details),
+                    onHorizontalDragUpdate: _animationController.value > 0
+                        ? (details) {
+                            closeDrag(details);
+                          }
+                        : null,
                     child: Stack(
                       children: [
                         widget.mainScreen,
@@ -446,56 +450,61 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
 
   Widget renderScaleRight({double slideHeight = 0.0, double scaleAngle = 0.0}) {
     double slidePercent = widget.isRTL ? MediaQuery.of(context).size.width * .095 : 15.0;
-    return dragClick(
-      menuScreen: Container(
-        color: widget.backgroundColor,
-        child: widget.menuScreen,
-      ),
-      shadow: widget.showShadow
-          ? [
-              /// Displaying the first shadow
-              AnimatedBuilder(
-                animation: _animationController,
-                builder: (_, w) => _zoomAndSlideContent(w,
-                    slideHeight: slideHeight,
-                    scaleAngle: scaleAngle == 0.0 ? 0.0 : scaleAngle - 8,
-                    scale: .9,
-                    slideW: slidePercent * 2),
-                child: Container(color: widget.shadowColor.withOpacity(0.3)),
-              ),
-              AnimatedBuilder(
-                animation: _animationController,
-                builder: (_, w) => _zoomAndSlideContent(w,
-                    slideHeight: slideHeight,
-                    scaleAngle: scaleAngle == 0.0 ? 0.0 : scaleAngle - 4.0,
-                    scale: .95,
-                    slideW: slidePercent),
-                child: Container(color: widget.shadowColor.withOpacity(0.9)),
-              )
-            ]
-          : null,
-      mainScreen: AnimatedBuilder(
-        animation: _animationController,
-        builder: (_, w) => _zoomAndSlideContent(w, slideHeight: slideHeight, scaleAngle: scaleAngle),
-        child: GestureDetector(
-          child: Stack(
-            children: [
-              widget.mainScreen,
-              if (_animationController.value > 0)
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onHorizontalDragUpdate: (details) => openDrag(details),
-                  child: Container(width: 20),
-                ),
-            ],
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (context, child) {
+        return dragClick(
+          menuScreen: Container(
+            color: widget.backgroundColor,
+            child: widget.menuScreen,
           ),
-          onTap: () {
-            if (_state == DrawerState.open) {
-              toggle();
-            }
-          },
-        ),
-      ),
+          shadow: widget.showShadow
+              ? [
+                  /// Displaying the first shadow
+                  AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (_, w) => _zoomAndSlideContent(w,
+                        slideHeight: slideHeight,
+                        scaleAngle: scaleAngle == 0.0 ? 0.0 : scaleAngle - 8,
+                        scale: .9,
+                        slideW: slidePercent * 2),
+                    child: Container(color: widget.shadowColor.withOpacity(0.3)),
+                  ),
+                  AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (_, w) => _zoomAndSlideContent(w,
+                        slideHeight: slideHeight,
+                        scaleAngle: scaleAngle == 0.0 ? 0.0 : scaleAngle - 4.0,
+                        scale: .95,
+                        slideW: slidePercent),
+                    child: Container(color: widget.shadowColor.withOpacity(0.9)),
+                  )
+                ]
+              : null,
+          mainScreen: AnimatedBuilder(
+            animation: _animationController,
+            builder: (_, w) => _zoomAndSlideContent(w, slideHeight: slideHeight, scaleAngle: scaleAngle),
+            child: GestureDetector(
+              child: Stack(
+                children: [
+                  widget.mainScreen,
+                  if (_animationController.value > 0)
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onHorizontalDragUpdate: (details) => openDrag(details),
+                      child: Container(width: 20),
+                    ),
+                ],
+              ),
+              onTap: () {
+                if (_state == DrawerState.open) {
+                  toggle();
+                }
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -677,7 +686,11 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
         Stack(
           children: [
             GestureDetector(
-              onHorizontalDragUpdate: (details) => closeDrag(details),
+              onHorizontalDragUpdate: _animationController.value > 0
+                  ? (details) {
+                      closeDrag(details);
+                    }
+                  : null,
               child: mainScreen,
             ),
             GestureDetector(
