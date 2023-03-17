@@ -386,7 +386,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                 Transform(
                   transform: Matrix4.identity()..translate(widget.isRTL ? -slide : slide),
                   child: GestureDetector(
-                    onPanUpdate: (details) => closeDrag(details),
+                    onHorizontalDragUpdate: (details) => closeDrag(details),
                     child: Stack(
                       children: [
                         widget.mainScreen,
@@ -407,7 +407,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                 ),
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
-                  onPanUpdate: (details) {
+                  onHorizontalDragUpdate: (details) {
                     double dx = details.delta.dx;
                     if ((dx > 6 || dx < 6 && _state == DrawerState.open) && !widget.isRTL) {
                       if (_state == DrawerState.closed) {
@@ -475,7 +475,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
               if (_animationController.value > 0)
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
-                  onPanUpdate: (details) => openDrag(details),
+                  onHorizontalDragUpdate: (details) => openDrag(details),
                   child: Container(width: 20),
                 ),
             ],
@@ -572,7 +572,16 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
       builder: (context, child) {
         return Stack(
           children: [
-            widget.mainScreen,
+            Stack(
+              children: [
+                widget.mainScreen,
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onHorizontalDragUpdate: (details) => openDrag(details),
+                  child: Container(width: 20),
+                ),
+              ],
+            ),
             if (_animationController.value > 0) ...[
               Opacity(
                 opacity: _animationController.drive(CurveTween(curve: Curves.easeIn)).value, //Curves.easeOut
@@ -653,12 +662,12 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
         Stack(
           children: [
             GestureDetector(
-              onPanUpdate: (details) => closeDrag(details),
+              onHorizontalDragUpdate: (details) => closeDrag(details),
               child: mainScreen,
             ),
             GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onPanUpdate: (details) => openDrag(details),
+              onHorizontalDragUpdate: (details) => openDrag(details),
               child: Container(
                 width: DrawerState.closed == _state ? 20 : 0,
               ),
