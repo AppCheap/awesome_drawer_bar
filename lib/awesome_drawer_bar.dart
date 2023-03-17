@@ -40,6 +40,7 @@ class AwesomeDrawerBar extends StatefulWidget {
     this.closeCurve,
     this.duration,
     this.isRTL = false,
+    this.disableOnCickOnMainScreen = false,
   }) : assert(angle <= 0.0 && angle >= -30.0);
 
   // Layout style
@@ -83,6 +84,8 @@ class AwesomeDrawerBar extends StatefulWidget {
 
   /// Static function to determine the device text direction RTL/LTR
   final bool isRTL;
+
+  final bool disableOnCickOnMainScreen;
 
   @override
   _AwesomeDrawerBarState createState() => new _AwesomeDrawerBarState();
@@ -453,6 +456,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
+        bool absorbing = _animationController.value > 0 && widget.disableOnCickOnMainScreen ? true : false;
         return dragClick(
           menuScreen: Container(
             color: widget.backgroundColor,
@@ -487,7 +491,10 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
             child: GestureDetector(
               child: Stack(
                 children: [
-                  widget.mainScreen,
+                  AbsorbPointer(
+                    absorbing: absorbing,
+                    child: widget.mainScreen,
+                  ),
                   if (_animationController.value > 0)
                     GestureDetector(
                       behavior: HitTestBehavior.translucent,
@@ -515,6 +522,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
         double rightSlide = MediaQuery.of(context).size.width * 0.75;
         double x = _animationController.value * (rightSlide / 1.89);
         double rotate = _animationController.value * (pi / 4);
+        bool absorbing = _animationController.value > 0 && widget.disableOnCickOnMainScreen ? true : false;
         return dragClick(
           menuScreen: Container(
             color: widget.backgroundColor,
@@ -536,7 +544,10 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                 },
                 child: Stack(
                   children: [
-                    widget.mainScreen,
+                    AbsorbPointer(
+                      absorbing: absorbing,
+                      child: widget.mainScreen,
+                    ),
                     if (_animationController.value > 0) Container(),
                   ],
                 ),
@@ -556,6 +567,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
         double x = _animationController.value * (rightSlide / 2.65);
         double scale = 1 - (_animationController.value * 0.3);
         double rotate = _animationController.value * (pi / 4);
+        bool absorbing = _animationController.value > 0 && widget.disableOnCickOnMainScreen ? true : false;
         return dragClick(
           menuScreen: Container(
             color: widget.backgroundColor,
@@ -578,7 +590,10 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
                 },
                 child: Stack(
                   children: [
-                    widget.mainScreen,
+                    AbsorbPointer(
+                      absorbing: absorbing,
+                      child: widget.mainScreen,
+                    ),
                     if (_animationController.value > 0) Container(),
                   ],
                 ),
