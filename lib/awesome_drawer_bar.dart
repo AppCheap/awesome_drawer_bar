@@ -314,12 +314,18 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
               }
             },
           ),
-          mainScreen: Transform.translate(
-            offset: Offset(widget.isRTL ? left : -left, 0),
-            child: Container(
-              width: rightSlide,
-              color: widget.backgroundColor,
-              child: widget.menuScreen,
+          mainScreen: ClipRRect(
+            borderRadius: BorderRadius.circular(widget.borderRadius * _animationController.value),
+            child: Transform.translate(
+              offset: Offset(widget.isRTL ? left : -left, 0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: widget.backgroundColor,
+                  borderRadius: BorderRadius.circular(widget.borderRadius * _animationController.value),
+                ),
+                width: rightSlide,
+                child: widget.menuScreen,
+              ),
             ),
           ),
         );
@@ -340,23 +346,26 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
           ),
           mainScreen: Transform(
             transform: Matrix4.identity()..translate(widget.isRTL ? -slide : slide),
-            child: GestureDetector(
-              child: Stack(
-                children: [
-                  widget.mainScreen,
-                  if (_animationController.value > 0) ...[
-                    Opacity(
-                      opacity: _animationController.value * 0.5,
-                      child: Container(color: Colors.black),
-                    )
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(widget.borderRadius * _animationController.value),
+              child: GestureDetector(
+                child: Stack(
+                  children: [
+                    widget.mainScreen,
+                    if (_animationController.value > 0) ...[
+                      Opacity(
+                        opacity: _animationController.value * 0.5,
+                        child: Container(color: Colors.black),
+                      )
+                    ],
                   ],
-                ],
+                ),
+                onTap: () {
+                  if (_state == DrawerState.open) {
+                    toggle();
+                  }
+                },
               ),
-              onTap: () {
-                if (_state == DrawerState.open) {
-                  toggle();
-                }
-              },
             ),
           ),
         );
@@ -508,17 +517,20 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
               ..translate(widget.isRTL ? -x : x)
               ..rotateY(widget.isRTL ? -rotate : rotate),
             alignment: widget.isRTL ? Alignment.centerLeft : Alignment.centerRight,
-            child: GestureDetector(
-              onTap: () {
-                if (_state == DrawerState.open) {
-                  toggle();
-                }
-              },
-              child: Stack(
-                children: [
-                  widget.mainScreen,
-                  if (_animationController.value > 0) Container(),
-                ],
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(widget.borderRadius * _animationController.value),
+              child: GestureDetector(
+                onTap: () {
+                  if (_state == DrawerState.open) {
+                    toggle();
+                  }
+                },
+                child: Stack(
+                  children: [
+                    widget.mainScreen,
+                    if (_animationController.value > 0) Container(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -547,17 +559,20 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
               ..scale(scale)
               ..rotateY(widget.isRTL ? rotate : -rotate),
             alignment: widget.isRTL ? Alignment.centerLeft : Alignment.centerRight,
-            child: GestureDetector(
-              onTap: () {
-                if (_state == DrawerState.open) {
-                  toggle();
-                }
-              },
-              child: Stack(
-                children: [
-                  widget.mainScreen,
-                  if (_animationController.value > 0) Container(),
-                ],
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(widget.borderRadius * _animationController.value),
+              child: GestureDetector(
+                onTap: () {
+                  if (_state == DrawerState.open) {
+                    toggle();
+                  }
+                },
+                child: Stack(
+                  children: [
+                    widget.mainScreen,
+                    if (_animationController.value > 0) Container(),
+                  ],
+                ),
               ),
             ),
           ),
