@@ -1,3 +1,12 @@
+# [1.2.0] - Update, Issue fixed.
+
+* Fix: the sidebar Drag action that interferes with webview scrolling.
+
+* Update: borderRadius on Style 3D_in, 3D_out.
+
+* Update: the one-click disable feature on the main screen.
+  in AwesomeDrawerBar add `disableOnCickOnMainScreen: true`
+
 # [1.1.1] - Issue fixed.
 
 * Fix: click on the drawer content when it is closed, after login, the drawer is opened.
