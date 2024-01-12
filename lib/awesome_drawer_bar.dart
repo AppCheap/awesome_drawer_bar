@@ -175,14 +175,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
       curve: Curves.slowMiddle,
     ));
     // CurvedAnimation(parent: _animationController, curve: Curves.easeIn); //Curves.easeIn Curves.linear
-    /// assign controller function to the widget methods
-    if (widget.controller != null) {
-      widget.controller!.open = open;
-      widget.controller!.close = close;
-      widget.controller!.toggle = toggle;
-      widget.controller!.isOpen = isOpen;
-      widget.controller!.stateNotifier = stateNotifier;
-    }
+    syncController();
   }
 
   _updateStatusNotifier() {
@@ -193,6 +186,12 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(AwesomeDrawerBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    syncController();
   }
 
   /// Build the widget based on the animation value
@@ -261,6 +260,17 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
         child: container,
       ),
     );
+  }
+
+  /// Sync the controller with the drawer
+  syncController() {
+    if (widget.controller != null) {
+      widget.controller!.open = open;
+      widget.controller!.close = close;
+      widget.controller!.toggle = toggle;
+      widget.controller!.isOpen = isOpen;
+      widget.controller!.stateNotifier = stateNotifier;
+    }
   }
 
   openDrag(DragUpdateDetails details) {
