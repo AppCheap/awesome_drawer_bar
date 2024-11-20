@@ -2,7 +2,6 @@ library awesome_drawer_bar;
 
 import 'dart:math' show pi;
 
-import 'package:awesome_drawer_bar/widgets/adaptive_layout_custom.dart';
 import 'package:flutter/material.dart';
 
 class AwesomeDrawerBarController {
@@ -660,11 +659,7 @@ class _AwesomeDrawerBarState extends State<AwesomeDrawerBar> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    return AdaptiveLayoutCustom(
-      menuScreen: widget.menuScreen,
-      mainScreen: widget.mainScreen,
-      child: _renderLayout(context),
-    );
+    return _renderLayout(context);
   }
 
   Widget _renderLayout(BuildContext context) {
