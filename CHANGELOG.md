@@ -1,3 +1,6 @@
+# [1.2.1] - Update, Issue fixed.
+* Fix: Adaptive layout not working properly on ipad 13 inch.
+
 # [1.2.0] - Update, Issue fixed.
 
 * Fix: the sidebar Drag action that interferes with webview scrolling.

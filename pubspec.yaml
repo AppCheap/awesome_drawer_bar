@@ -1,6 +1,6 @@
 name: awesome_drawer_bar
 description: A Flutter package with custom implementation of the Side Menu (Drawer)
-version: 1.2.0
+version: 1.2.1
 homepage: https://appcheap.io
 repository: https://github.com/AppCheap/awesome_drawer_bar
 
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_adaptive_scaffold: ^0.0.8
+  flutter_adaptive_scaffold: ^0.3.1
 
 dev_dependencies:
   flutter_test:
